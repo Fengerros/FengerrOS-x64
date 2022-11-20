@@ -58,4 +58,4 @@ start_64bit:
     call _start
     jmp $
 
-times 16384 - ($-$$) db 0
+times 2048 - ($-$$) db 0
