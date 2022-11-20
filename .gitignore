@@ -1,4 +1,4 @@
 *.bin
 *.img
-*.temp
+*.tmp
 *.o

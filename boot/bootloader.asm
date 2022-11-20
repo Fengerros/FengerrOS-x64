@@ -14,8 +14,8 @@ jmp PROGRAM_SPACE
 
 jmp $
 
-%include "bootloader_functions/print_string.asm"
-%include "bootloader_functions/disk_read.asm"
+%include "boot/bootloader_functions/print_string.asm"
+%include "boot/bootloader_functions/disk_read.asm"
 
 BOOTLOADER_MSG:
     db "Bootloader boot up...", 0

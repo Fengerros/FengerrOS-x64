@@ -1,7 +1,7 @@
 jmp enter_protected_mode
 
-%include "bootloader_functions/gdt.asm"
-%include "bootloader_functions/print_string.asm"
+%include "boot/bootloader_functions/gdt.asm"
+%include "boot/bootloader_functions/print_string.asm"
 
 enter_protected_mode:
     call enable_a20
@@ -21,8 +21,8 @@ enable_a20:
     ret
 
 [bits 32]
-%include "bootloader_functions/CPUID.asm"
-%include "bootloader_functions/simple_paging.asm"
+%include "boot/bootloader_functions/CPUID.asm"
+%include "boot/bootloader_functions/simple_paging.asm"
 
 start_protected_mode:
     mov ax, dataseg

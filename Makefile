@@ -15,11 +15,11 @@ kernel.tmp : kernel.o ext.o
 kernel.o : kernel/kernel.cpp
 	x86_64-elf-gcc -ffreestanding -mno-red-zone -m64 -c "$<" -o "$@"
 
-ext.o : ext.asm
+ext.o : boot/ext.asm
 	nasm -f elf64 $< -o $@
 
-bootloader.bin : bootloader.asm
-	nasm -f bin $< -o $@
+bootloader.bin : boot/bootloader.asm
+	nasm -f bin -I 'boot/bootloader_functions' $< -o $@
 
 clean:
 	rm -fr *.bin *.o *.dis *.img *.tmp
