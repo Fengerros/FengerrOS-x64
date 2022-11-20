@@ -1,15 +1,50 @@
 [org 0x7e00]
 
-
-mov bx, MSG
+mov bx, MSG_LOAD_SUCCESS
 call println_string
 
-jmp $
+jmp enter_protected_mode
+
+
+MSG_LOAD_SUCCESS:
+    db "Extend memory working...", 0
 
 %include "bootloader_functions/print_string.asm"
+%include "bootloader_functions/gdt.asm"
 
+enter_protected_mode:
+    call enable_a20
+    
+    cli
+    lgdt [gdt_descriptor]
+    mov eax, cr0
+    or eax, 1
+    mov cr0, eax
+    jmp codeseg:start_protected_mode
 
-MSG:
-    db "Extend memory working...", 0
+enable_a20:
+    in al, 0x92
+    or al, 0x2
+    out 0x92, al
+
+    ret
+
+[bits 32]
+start_protected_mode:
+    mov ax, dataseg
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    mov [0xb8000], byte '-'
+    mov [0xb8000 + 1], byte 0xa
+    mov [0xb8002], byte '-'
+    mov [0xb8000 + 3], byte 0xb
+    mov [0xb8004], byte '>'
+    mov [0xb8000 + 5], byte 0xc
+
+    jmp $
 
 times 2048 - ($-$$) db 0
