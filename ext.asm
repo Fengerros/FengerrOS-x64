@@ -1,16 +1,7 @@
-[org 0x7e00]
-
-mov bx, MSG_LOAD_SUCCESS
-call println_string
-
 jmp enter_protected_mode
 
-
-MSG_LOAD_SUCCESS:
-    db "Extend memory working...", 0
-
-%include "bootloader_functions/print_string.asm"
 %include "bootloader_functions/gdt.asm"
+%include "bootloader_functions/print_string.asm"
 
 enter_protected_mode:
     call enable_a20
@@ -56,11 +47,15 @@ start_protected_mode:
     jmp codeseg:start_64bit
 
 [bits 64]
+[extern _start]
+
 start_64bit:
     mov edi, 0xb8000
     mov rax, 0x1f201f201f201f20
     mov ecx, 500
     rep stosq
+
+    call _start
     jmp $
 
 times 2048 - ($-$$) db 0

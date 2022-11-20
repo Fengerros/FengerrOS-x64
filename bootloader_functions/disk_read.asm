@@ -3,7 +3,7 @@ PROGRAM_SPACE equ 0x7e00
 read_disk:
     mov ah, 0x02
     mov bx, PROGRAM_SPACE
-    mov al, 3
+    mov al, 5 ; read 5 sectors (change when needed)
     mov dl, [BOOT_DISK]
     mov ch, 0x00
     mov dh, 0x00

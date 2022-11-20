@@ -1,17 +1,26 @@
-all: bootloader.img
+all: OS-image.img
 
 run: all
-	qemu-system-x86_64 -drive file=bootloader.img,format=raw,index=0,media=disk
+	qemu-system-x86_64 -drive file=OS-image.img,format=raw,index=0,media=disk
 
-bootloader.img : boot.bin ext.bin 
-	cat $^ > bootloader.img
+OS-image.img : bootloader.bin kernel.bin 
+	cat $^ > $@
 
-ext.bin : ext.asm
-	nasm -f bin $< -o $@
+kernel.bin : kernel.tmp
+	objcopy -O binary $^ $@
 
-boot.bin : bootloader.asm
+kernel.tmp : kernel.o ext.o
+	x86_64-elf-ld -o kernel.tmp -Ttext 0x7e00 ext.o kernel.o
+
+kernel.o : kernel/kernel.cpp
+	x86_64-elf-gcc -ffreestanding -mno-red-zone -m64 -c "$<" -o "$@"
+
+ext.o : ext.asm
+	nasm -f elf64 $< -o $@
+
+bootloader.bin : bootloader.asm
 	nasm -f bin $< -o $@
 
 clean:
-	rm -fr *.bin *.o *.dis *.img
+	rm -fr *.bin *.o *.dis *.img *.tmp
 	rm -fr kernel/*.o boot/*.bin drivers/*.o
