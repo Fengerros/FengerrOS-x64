@@ -30,6 +30,9 @@ enable_a20:
     ret
 
 [bits 32]
+%include "bootloader_functions/CPUID.asm"
+%include "bootloader_functions/simple_paging.asm"
+
 start_protected_mode:
     mov ax, dataseg
     mov ds, ax
@@ -45,6 +48,19 @@ start_protected_mode:
     mov [0xb8004], byte '>'
     mov [0xb8000 + 5], byte 0xc
 
+    call detect_cpuid
+    call detect_longmode
+    call set_up_identity_paging
+    call edit_gdt
+
+    jmp codeseg:start_64bit
+
+[bits 64]
+start_64bit:
+    mov edi, 0xb8000
+    mov rax, 0x1f201f201f201f20
+    mov ecx, 500
+    rep stosq
     jmp $
 
 times 2048 - ($-$$) db 0
