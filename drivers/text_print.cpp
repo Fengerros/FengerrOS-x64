@@ -25,7 +25,7 @@ uint_16 PositionFromCoordinates(uint_8 x, uint_8 y){
     return y * VGA_WIDTH + x;
 }
 
-void PrintString(const char* string){
+void PrintString(const char* string, uint_8 color = 0xa | 0x0f){
     uint_8* charPtr = (uint_8*)string;
     uint_16 index = CursorPosition;
     while(*charPtr != 0){
@@ -38,13 +38,22 @@ void PrintString(const char* string){
             index -= index % VGA_WIDTH;
             break;
         default:
-            *(VGA_MEMORY + index * 2) = *charPtr;
+            *(VGA_MEMORY + index * 2) = *charPtr;    
+            *(VGA_MEMORY + index * 2 + 1) = color;
             index++;
             break;
         }
         charPtr++;
     }
     SetCursorPosiition(index);
+}
+
+void PrintChar(char chr, uint_8 color = 0xa | 0x0f)
+{
+  *(VGA_MEMORY + CursorPosition * 2) = chr;
+  *(VGA_MEMORY + CursorPosition * 2 + 1) = color;
+
+  SetCursorPosiition(CursorPosition + 1);
 }
 
 char hexToStringOutput[128];
