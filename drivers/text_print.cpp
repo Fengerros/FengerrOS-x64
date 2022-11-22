@@ -1,12 +1,18 @@
 #pragma once
 #include "../drivers/io.cpp"
 #include "../kernel/typedefs.cpp"
+#include "../drivers/colors.cpp"
 
 #define VGA_MEMORY (uint_8*)0xb8000
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
 uint_16 CursorPosition;
+
+namespace screen{
+    uint_8 background_color = BACKGROUND_BLACK;
+    uint_8 foreground_color = FOREGROUND_LIGHTGREEN;
+}
 
 void SetCursorPosition(uint_16 positions){
     
@@ -133,7 +139,7 @@ const char* IntegerToString(T value) {
 void ClearScreen(uint_8 color = 0) {
     for (uint_16 i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
         *(VGA_MEMORY + i * 2) = 0;
-        *(VGA_MEMORY + i * 2 + 1) = 0 | color;
+        *(VGA_MEMORY + i * 2 + 1) = color;
     }
     SetCursorPosition(0);
 }
