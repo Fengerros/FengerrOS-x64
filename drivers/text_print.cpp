@@ -4,12 +4,13 @@
 
 #define VGA_MEMORY (uint_8*)0xb8000
 #define VGA_WIDTH 80
+#define VGA_HEIGHT 25
 
 uint_16 CursorPosition;
 
 void SetCursorPosiition(uint_16 positions){
     
-    if(positions > VGA_WIDTH * 25 || positions < 0){
+    if(positions > VGA_WIDTH * VGA_HEIGHT || positions < 0){
         positions = 0;
     }
 
@@ -106,4 +107,12 @@ const char* IntegerToString(T value) {
 	integerToStringOutput[isNegative + size - index] = remainder + 48;
 	integerToStringOutput[isNegative + size + 1] = 0;
 	return integerToStringOutput;
+}
+
+void ClearScreen() {
+    for (uint_16 i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
+        *(VGA_MEMORY + i * 2) = 0;
+        *(VGA_MEMORY + i * 2 + 1) = 0;
+    }
+    SetCursorPosiition(0);
 }
