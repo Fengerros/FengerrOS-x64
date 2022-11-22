@@ -8,7 +8,7 @@
 
 uint_16 CursorPosition;
 
-void SetCursorPosiition(uint_16 positions){
+void SetCursorPosition(uint_16 positions){
     
     if(positions > VGA_WIDTH * VGA_HEIGHT || positions < 0){
         positions = 0;
@@ -46,7 +46,28 @@ void PrintString(const char* string, uint_8 color = 0xa | 0x0f){
         }
         charPtr++;
     }
-    SetCursorPosiition(index);
+    SetCursorPosition(index);
+}
+
+void PrintStringFromFile(const char* string, uint_8 color = 0xa | 0x0f){
+    uint_8* charPtr = (uint_8*)string;
+    uint_16 index = CursorPosition;
+    while(*charPtr != 0){
+        switch (*charPtr)
+        {
+        case 10:
+            index += VGA_WIDTH;
+            index -= index % VGA_WIDTH;
+            break;
+        default:
+            *(VGA_MEMORY + index * 2) = *charPtr;    
+            *(VGA_MEMORY + index * 2 + 1) = color;
+            index++;
+            break;
+        }
+        charPtr++;
+    }
+    SetCursorPosition(index);
 }
 
 void PrintChar(char chr, uint_8 color = 0xa | 0x0f)
@@ -54,7 +75,7 @@ void PrintChar(char chr, uint_8 color = 0xa | 0x0f)
   *(VGA_MEMORY + CursorPosition * 2) = chr;
   *(VGA_MEMORY + CursorPosition * 2 + 1) = color;
 
-  SetCursorPosiition(CursorPosition + 1);
+  SetCursorPosition(CursorPosition + 1);
 }
 
 char hexToStringOutput[128];
@@ -109,10 +130,10 @@ const char* IntegerToString(T value) {
 	return integerToStringOutput;
 }
 
-void ClearScreen() {
+void ClearScreen(uint_8 color = 0) {
     for (uint_16 i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
         *(VGA_MEMORY + i * 2) = 0;
-        *(VGA_MEMORY + i * 2 + 1) = 0;
+        *(VGA_MEMORY + i * 2 + 1) = 0 | color;
     }
-    SetCursorPosiition(0);
+    SetCursorPosition(0);
 }

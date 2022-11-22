@@ -6,11 +6,14 @@ run: all
 OS-image.img : bootloader.bin kernel.bin 
 	cat $^ > $@
 
-kernel.bin : link.ld kernel.o ext.o
+kernel.bin : link.ld kernel.o ext.o bin.o
 	x86_64-elf-ld -T "link.ld"
 
 kernel.o : kernel/kernel.cpp
 	x86_64-elf-gcc -Ttext 0x8000 -ffreestanding -mno-red-zone -m64 -c "$<" -o "$@"
+
+bin.o : boot/bin.asm
+	nasm -f elf64 $< -o $@
 
 ext.o : boot/ext.asm
 	nasm -f elf64 $< -o $@
